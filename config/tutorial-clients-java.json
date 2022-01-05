@@ -1,0 +1,10 @@
+{
+    "title": "Tutorial Clients",
+    "type": "exe",
+    "name": "clients",
+    "details": {
+		"path": "%Add your path to this folder ->%/start/clients/target",
+		"command": "java", 
+		"parameters": "-jar clients-1.0-SNAPSHOT.jar"
+    }
+}

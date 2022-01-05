@@ -7,9 +7,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.DefaultTableModel;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static java.awt.Color.WHITE;
 import static javax.swing.BorderFactory.createEmptyBorder;
@@ -61,25 +59,9 @@ public class ClientsTable extends JScrollPane {
         }
 
         Client client = clients.get(clientIndex);
+
         // 2. Context update should be invoked here
-        // updateSharedContext(client);
 
         // 3.2 Call "showPortfolio" Interop method here
-        callInterop(client);
-    }
-
-    private void updateSharedContext(Client client) {
-        HashMap<String, Object> context = new HashMap<>();
-        context.put("clientName", client.getFullName());
-        context.put("portfolio", client.getDetails());
-
-        glue.contexts().update("selectedClient", context);
-    }
-
-    private void callInterop(Client client) {
-        Map<String, Object> args = new HashMap<>();
-        args.put("clientName", client.getFullName());
-        args.put("portfolio", client.getDetails());
-        glue.interop().invoke("showPortfolio", args);
     }
 }

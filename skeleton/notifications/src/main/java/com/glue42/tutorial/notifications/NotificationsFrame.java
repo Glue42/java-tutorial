@@ -1,17 +1,19 @@
-package com.glue42.tutorial.clients.view;
+package com.glue42.tutorial.notifications;
 
-import com.glue42.tutorial.clients.model.Client;
-import com.glue42.tutorial.clients.util.RestClient;
 import com.tick42.glue.Glue;
 import com.tick42.glue.desktop.windows.Window;
-import com.tick42.glue.desktop.windows.WindowHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import java.awt.BorderLayout;
-import java.io.IOException;
+import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -22,33 +24,25 @@ import static java.awt.Color.WHITE;
 import static javax.swing.BorderFactory.createEmptyBorder;
 import static javax.swing.SwingConstants.CENTER;
 
-public class ClientsFrame extends JFrame {
+public class NotificationsFrame extends JFrame {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClientsFrame.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(NotificationsFrame.class);
 
     private final AtomicReference<Window> window = new AtomicReference<>(null);
-    private final ClientsTable clientsTable;
 
-    public ClientsFrame() {
-        clientsTable = new ClientsTable();
+    private Glue glue;
+    private JTextField titleTextField;
+
+    public NotificationsFrame() {
         setUpFrame();
-        fetchClients();
     }
 
     public void registerWithGlue(Glue glue) {
-        clientsTable.setGlue(glue);
-
         // 1. Register JFrame in Glue42
-        WindowHandle<ClientsFrame> handle = glue.windows().getWindowHandle(this);
-        glue.windows()
-                .register(handle)
-                .whenComplete((win, exception) -> {
-                    if (exception != null || win == null) {
-                        LOGGER.error("unable to register JFrame", exception);
-                    } else {
-                        window.set(win);
-                    }
-                });
+        // and assign received Window instance to this.window:
+        // this.window.set(window);
+
+        this.glue = glue;
     }
 
     public CompletionStage<Void> stop() {
@@ -64,7 +58,7 @@ public class ClientsFrame extends JFrame {
     private void setUpFrame() {
         setLayout(new BorderLayout());
         add(buildHeader(), BorderLayout.NORTH);
-        add(clientsTable, BorderLayout.CENTER);
+        add(buildContent(), BorderLayout.CENTER);
 
         getContentPane().setBackground(WHITE);
         setSize(800, 450);
@@ -72,18 +66,34 @@ public class ClientsFrame extends JFrame {
     }
 
     private JLabel buildHeader() {
-        JLabel header = new JLabel("Clients", CENTER);
+        JLabel header = new JLabel("Manually raise notifications", CENTER);
         header.setBorder(createEmptyBorder(30, 0, 30, 0));
         return header;
     }
 
-    private void fetchClients() {
-        RestClient restClient = new RestClient();
-        try {
-            List<Client> clients = restClient.fetchClients();
-            clientsTable.setClients(clients);
-        } catch (IOException exception) {
-            LOGGER.error("unable to fetch clients", exception);
-        }
+    private Component buildContent() {
+        JPanel panel = new JPanel();
+        panel.setBackground(WHITE);
+
+        titleTextField = new JTextField(20);
+        panel.add(titleTextField);
+
+        JButton button = new JButton("Raise");
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                raiseNotification();
+            }
+        });
+        panel.add(button);
+
+        return panel;
+    }
+
+    private void raiseNotification() {
+        String title = titleTextField.getText();
+
+        // 4.1 Raise a notification here
+        // 4.2 The notification should invoke the method registered in the Clients application which opens the Contact Info
     }
 }

@@ -1,54 +1,43 @@
-package com.glue42.tutorial.clients.view;
+package com.glue42.tutorial.contacts.view;
 
-import com.glue42.tutorial.clients.model.Client;
-import com.glue42.tutorial.clients.util.RestClient;
 import com.tick42.glue.Glue;
 import com.tick42.glue.desktop.windows.Window;
-import com.tick42.glue.desktop.windows.WindowHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import java.awt.BorderLayout;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static java.awt.Color.WHITE;
+import static java.util.Collections.emptyMap;
 import static javax.swing.BorderFactory.createEmptyBorder;
 import static javax.swing.SwingConstants.CENTER;
 
-public class ClientsFrame extends JFrame {
+public class ContactsFrame extends JFrame {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClientsFrame.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ContactsFrame.class);
 
     private final AtomicReference<Window> window = new AtomicReference<>(null);
-    private final ClientsTable clientsTable;
+    private final ContactsTable contactsTable;
 
-    public ClientsFrame() {
-        clientsTable = new ClientsTable();
+    public ContactsFrame() {
+        contactsTable = new ContactsTable();
         setUpFrame();
-        fetchClients();
     }
 
     public void registerWithGlue(Glue glue) {
-        clientsTable.setGlue(glue);
-
         // 1. Register JFrame in Glue42
-        WindowHandle<ClientsFrame> handle = glue.windows().getWindowHandle(this);
-        glue.windows()
-                .register(handle)
-                .whenComplete((win, exception) -> {
-                    if (exception != null || win == null) {
-                        LOGGER.error("unable to register JFrame", exception);
-                    } else {
-                        window.set(win);
-                    }
-                });
+        // and assign received Window instance to this.window:
+        // this.window.set(window);
+
+        showContacts(glue);
     }
 
     public CompletionStage<Void> stop() {
@@ -64,7 +53,7 @@ public class ClientsFrame extends JFrame {
     private void setUpFrame() {
         setLayout(new BorderLayout());
         add(buildHeader(), BorderLayout.NORTH);
-        add(clientsTable, BorderLayout.CENTER);
+        add(contactsTable, BorderLayout.CENTER);
 
         getContentPane().setBackground(WHITE);
         setSize(800, 450);
@@ -72,18 +61,16 @@ public class ClientsFrame extends JFrame {
     }
 
     private JLabel buildHeader() {
-        JLabel header = new JLabel("Clients", CENTER);
+        JLabel header = new JLabel("Contacts", CENTER);
         header.setBorder(createEmptyBorder(30, 0, 30, 0));
         return header;
     }
 
-    private void fetchClients() {
-        RestClient restClient = new RestClient();
-        try {
-            List<Client> clients = restClient.fetchClients();
-            clientsTable.setClients(clients);
-        } catch (IOException exception) {
-            LOGGER.error("unable to fetch clients", exception);
-        }
+    private void showContacts(Glue glue) {
+        // 5. Call findWhoToCall Interop method and pass the result to contactsTable.setContacts()
+        glue.interop().invoke("findWhoToCall", emptyMap())
+                .thenAccept(result -> {
+                    result.getReturned().ifPresent(map -> contactsTable.setContacts((List<Map<String, String>>) map.get("contacts")));
+                });
     }
 }

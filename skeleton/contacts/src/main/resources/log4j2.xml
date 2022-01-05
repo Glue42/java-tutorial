@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright (c) Tick42
+  -->
+
+<Configuration status="warn" monitorInterval="5">
+  <Appenders>
+    <Console name="console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+    </Console>
+    <File name="file" fileName="contacts.log">
+      <PatternLayout>
+        <Pattern>%d %5p %pid --- %-40.40c{1.} [%t]: %m%n</Pattern>
+      </PatternLayout>
+    </File>
+  </Appenders>
+  <Loggers>
+    <Logger name="com.glue42.tutorial" level="debug"/>
+    <Root level="info">
+      <AppenderRef ref="console"/>
+      <AppenderRef ref="file"/>
+    </Root>
+  </Loggers>
+</Configuration>

@@ -1,0 +1,11 @@
+{
+    "name":"Portfolio",
+    "title":"Tutorial Portfolio",
+    "caption": "Application which shows the details about a client",
+    "type": "exe",
+    "details":{
+		"path": "%Add your path to this folder -> %/start/portfolio/target",
+		"command": "java", 
+		"parameters": "-jar portfolio-1.0-SNAPSHOT.jar"
+    }
+}

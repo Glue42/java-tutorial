@@ -4,7 +4,6 @@ import com.glue42.tutorial.clients.model.Client;
 import com.glue42.tutorial.clients.util.RestClient;
 import com.tick42.glue.Glue;
 import com.tick42.glue.desktop.windows.Window;
-import com.tick42.glue.desktop.windows.WindowHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,16 +38,8 @@ public class ClientsFrame extends JFrame {
         clientsTable.setGlue(glue);
 
         // 1. Register JFrame in Glue42
-        WindowHandle<ClientsFrame> handle = glue.windows().getWindowHandle(this);
-        glue.windows()
-                .register(handle)
-                .whenComplete((win, exception) -> {
-                    if (exception != null || win == null) {
-                        LOGGER.error("unable to register JFrame", exception);
-                    } else {
-                        window.set(win);
-                    }
-                });
+        // and assign received Window instance to this.window:
+        // this.window.set(window);
     }
 
     public CompletionStage<Void> stop() {

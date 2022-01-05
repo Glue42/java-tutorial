@@ -1,0 +1,11 @@
+{
+    "name":"contacts",
+    "title":" Tutorial Contacts",
+    "caption": "Opens when a notification is clicked",
+    "type": "exe",
+    "details":{
+		"path": "%Add your path to this folder -> %/start/contacts/target",
+		"command": "java", 
+		"parameters": "-jar contacts-1.0-SNAPSHOT.jar"
+    }
+}
